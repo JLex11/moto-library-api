@@ -1,0 +1,120 @@
+{
+  "motos": [
+    {
+      "marca": "Yamaha",
+      "modelo": "YZF-R1",
+      "año": 2023,
+      "tipo": "Deportiva",
+      "precio": 15000000,
+      "ficha_tecnica": {
+        "motor": {
+          "cilindros": {
+            "numero": 4,
+            "disposicion": "En línea" // "en V", "boxer", "W", "H", "X", "Radial"
+          },
+          "cilindrada": 998, // cc
+          "potencia": {
+            "hp": 200,
+            "rpm": 13500
+          },
+          "torque": {
+            "nm": 113,
+            "rpm": 11500
+          },
+          "relacion_de_compresion": "13:1",
+          "refrigeracion": "Liquida",
+          "sistema_de_alimentacion": "Inyeccion electronica",
+          "emision_de_gases": "Euro 5",
+          "batería": "12V, 12Ah"
+        },
+        "ruedas": {
+          "delantera": {
+            "tipo": "Llanta",
+            "medida": "120/70 ZR17M/C (58W)"
+          },
+          "trasera": {
+            "tipo": "Llanta",
+            "medida": "190/55 ZR17M/C (75W)"
+          }
+        },
+        "frenos": {
+          "delantero": {
+            "tipo": "Doble disco",
+            "diametro": "320 mm"
+          },
+          "trasero": {
+            "tipo": "Disco",
+            "diametro": "220 mm"
+          },
+          "sistema_antibloqueo": "ABS"
+        },
+        "suspension": {
+          "delantera": "Horquilla telescópica invertida",
+          "trasera": "Monoamortiguador",
+          "recorrido_delantero": "120 mm",
+          "recorrido_trasero": "120 mm"
+        },
+        "dimensiones": {
+          "largo": "2055 mm",
+          "ancho": "720 mm",
+          "alto": "1150 mm",
+          "distancia_entre_ejes": "1405 mm",
+          "altura_del_asiento": "815 mm",
+          "peso": "199 kg"
+        },
+        "transmision": {
+          "tipo": "Manual",
+          "cambios": 6
+        },
+        "combustible": {
+          "tipo": "Gasolina",
+          "consumo_aproximado": "6.5 l/100 km",
+          "tanque": "17 litros",
+          "octanaje_recomendado": "95 octanos"
+        },
+        "prestaciones": {
+          "velocidad_maxima": "299 km/h",
+          "aceleracion_0_a_100": "2.9 segundos"
+        },
+        "equipamiento": {
+          "luces": "LED",
+          "instrumentacion": "Pantalla TFT",
+          "frenos_abs": true,
+          "control_de_traccion": true,
+          "quickshifter": true
+        }
+      },
+      "datos_deducibles": {
+        "autonomia_aproximada": 340
+      },
+      "imagenes_adicionales": [
+        {
+          "angulo": "lateral",
+          "imagen": "https://www.yamaha-motor.co/wp-content/uploads/2023/03/YZF-R1-2023-Blanco-02.jpg"
+        },
+        {
+          "angulo": "trasera",
+          "imagen": "https://www.yamaha-motor.co/wp-content/uploads/2023/03/YZF-R1-2023-Blanco-03.jpg"
+        },
+        {
+          "modelo_3D": true,
+          "imagen": "https://www.yamaha-motor.co/wp-content/uploads/2023/03/YZF-R1-2023-3D.obj"
+        }
+      ]
+      // "resenas": [
+      // 	{
+      // 		"autor": "Juan Pérez",
+      // 		"puntuacion": 5,
+      // 		"titulo": "Excelente moto",
+      // 		"comentario": "La Yamaha YZF-R1 es una moto increíble. Es potente, ágil y muy divertida de conducir. La recomiendo encarecidamente a cualquier persona que busque una moto deportiva de alto rendimiento."
+      // 	},
+      // 	{
+      // 		"autor": "Ana García",
+      // 		"puntuacion": 4,
+      // 		"titulo": "Cómoda y segura",
+      // 		"comentario": "La Yamaha YZF-R1 es una moto muy cómoda y segura. Es perfecta para viajes largos y en condicioneses de calidad."
+      // 	}
+      // ]
+    }
+  ]
+}
