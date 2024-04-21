@@ -4,3 +4,5 @@
 - [Github cron jobs - tutorial](https://www.youtube.com/watch?v=2OwLb-aaiBQ)
 - [Hono documentation](https://hono.dev/top)
 - [Cheerio documentation](https://cheerio.js.org/docs/intro)
+- [D1 db documentation](https://developers.cloudflare.com/d1/)
+- [D1 db from hono](https://developers.cloudflare.com/d1/examples/d1-and-hono/)
