@@ -4,6 +4,7 @@ import { Motorcycle, MotorcycleInfo } from '../../types'
 export interface ScrapingMethod {
   brand: string
   urls: string[]
+  getPaginationUrls?: ($page: CheerioAPI) => string[]
   getMotorcycles: ($page: CheerioAPI) => MotorcyclesData[]
   getMotorcycleInfo: ($page: CheerioAPI) => MotorcycleInfo
 }

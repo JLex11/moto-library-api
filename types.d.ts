@@ -112,6 +112,10 @@ export interface Equipment {
   absBreaks: boolean
   tractionControl: boolean
   quickshifter: boolean
+  rideModes: boolean
+  cruiseControl: boolean
+  lowRPMAssist: boolean
+  launchControl: boolean
 }
 
 export interface Wheels {

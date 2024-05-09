@@ -8,38 +8,29 @@ import { getImages } from './lib/getImages'
 import { getTechSpecs } from './lib/getTechSpecs'
 
 const scrapeMotorcycles = ($page: CheerioAPI): MotorcyclesData[] => {
-  const $motorcyclesSections = [...$page('.all-info section .row:not(:nth-child(1), :nth-child(2))')]
+  const $motorcycles = [...$page('.moto-info')]
 
-  const motorcyclesData = $motorcyclesSections.flatMap(motorcyclesSection => {
-    const motorcyclesGroup = $page(motorcyclesSection).find('h2').first().text()
-    const $motorcycles = [...$page(motorcyclesSection).find('a')]
+  const motorcycles = $motorcycles.map(motorcycle => {
+    const $motorcycle = $page(motorcycle)
+    const motorcycleName = $motorcycle.find('h4').first().text()
+    const motorcycleUrl = $motorcycle.find('a').first().attr('href')!
+    const motorcycleGroup = $motorcycle.find('div > p').first().text()
 
-    const motorcycles = $motorcycles.map(motorcycle => {
-      const $motorcycle = $page(motorcycle)
-      const motorcycleName = $motorcycle.find('.text-motorcycle h2').first().text()
-      const motorcycleUrl = $motorcycle.attr('href')!
-      const motorcycleGroup = motorcyclesGroup
-
-      return { motorcycleName, motorcycleUrl, motorcycleGroup }
-    })
-
-    return motorcycles
+    return { motorcycleName, motorcycleUrl, motorcycleGroup }
   })
 
-  return motorcyclesData
+  return motorcycles
 }
 
 const scrapeMotorcycleInfo = ($page: CheerioAPI): MotorcycleInfo => {
-  const model = $page('.modelo h1').text()
-  const year = $page('.modelo .current').text()
-  const price = $page('.introduccion .box-introduction strong, .productView .precio h2')
-    .text()
-    .replace(/\D/g, '')
+  const model = $page('.titulo p').first().text()
+  const year = $page('.modelo').first().text()
+  const price = $page('.precio-moto').first().text().replace(/\D/g, '')
   const ivaIncluded =
-    $page('.introduccion .box-introduction span, .productView .precio span')
+    $page('.precio .iva')
       .text()
-      .match(/IVA incluido/i) !== null
-  const techSpecs = getTechSpecs($page, model)
+      .match(/\+ IVA/i) !== null
+  const techSpecs = getTechSpecs($page)
   const deductibleData = getDeductibleData($page)
   const images = getImages($page)
 
@@ -75,14 +66,28 @@ const mapMotorcyclesData = async (motorcyclesData: MotorcyclesData[]): Promise<S
   return motorcyclesInfo
 }
 
+const getPaginationUrls = ($: CheerioAPI) => {
+  return $('.pager__item a')
+    .toArray()
+    .map(a => a.attribs.href)
+}
+
 export const getAllMotorcycles = async () => {
   const { brand, urls } = scrapingData
 
   const motorcyclesPromises = urls.map<Promise<Motorcycle[]>>(async url => {
     const $ = await cheerioFromUrl(url)
 
-    const motorcyclesData = scrapeMotorcycles($)
-    const motorcycles = await mapMotorcyclesData(motorcyclesData)
+    const paginationUrls = getPaginationUrls($)
+    const motorcyclesPromises = paginationUrls.map(async paginationUrl => {
+      const $page = await cheerioFromUrl(paginationUrl)
+      return scrapeMotorcycles($page)
+    })
+
+    const motorcyclesData = await Promise.all(motorcyclesPromises)
+    const flattenedMotorcyclesData = motorcyclesData.flat()
+
+    const motorcycles = await mapMotorcyclesData(flattenedMotorcyclesData)
     return motorcycles.map(motorcycle => ({ ...motorcycle, brand }))
   })
 
