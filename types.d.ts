@@ -9,7 +9,7 @@ export interface Motorcycle {
   images: MotorcycleImages
 }
 
-export type MotorcycleInfo = Omit<Motorcycle, 'brand' | 'type'>
+export type MotorcycleInfo = Omit<Motorcycle, 'brand' | 'type'> & { type?: string }
 
 export interface Price {
   price: number
@@ -116,6 +116,7 @@ export interface Equipment {
   cruiseControl: boolean
   lowRPMAssist: boolean
   launchControl: boolean
+  hillStartAssist: boolean
 }
 
 export interface Wheels {
