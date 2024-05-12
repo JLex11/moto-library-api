@@ -59,6 +59,7 @@ export const defineTechSpecs = (): TechSpecs => ({
     cruiseControl: false,
     launchControl: false,
     lowRPMAssist: false,
-    rideModes: false
+    rideModes: false,
+    hillStartAssist: false
   }
 })

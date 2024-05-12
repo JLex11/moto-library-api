@@ -13,11 +13,12 @@ export const getTechSpecs = ($page: CheerioAPI): TechSpecs => {
     const value = $specRow.find('li').last().text().toLowerCase().trim()
 
     if (title.match(/Motor/i)) {
-      const [cylinderNumber, cylinderLayout] = value.split('Tiempos')
-      techSpecs.engine.cylinders.number = parseInt(cylinderNumber.replace(/\D/g, ''), 10)
-      techSpecs.engine.cylinders.layout = cylinderLayout
+      const [, cylinderNumber] = value.split(/Tiempos/i)
+      techSpecs.engine.cylinders.number = cylinderNumber ? Number(cylinderNumber.replace(/\D/g, '')) : 0
+      // techSpecs.engine.cylinders.layout = cylinderLayout
     }
-    if (title.match(/Cilindraje/i)) techSpecs.engine.displacement = Number(value.replace(/\D/g, ''))
+    if (title.match(/Cilindraje/i))
+      techSpecs.engine.displacement = Number(value.split(/cm/i)[0].replace(/\D/g, ''))
     // if (title.match(/relación de compresión/i)) techSpecs.engine.compressionRatio = value
     if (title.match(/Sistema de refrigeración/i))
       techSpecs.engine.cooling = value.split(',').pop()?.trim() || 'aire'
@@ -49,9 +50,9 @@ export const getTechSpecs = ($page: CheerioAPI): TechSpecs => {
     if (title.match(/peso .*/i)) techSpecs.dimensions.weight = value
     if (title.match(/Transmisión/i)) {
       // Manual, engranaje constante | 6 Velocidades
-      const [transmissionType, gears] = value.split(' de ')
-      techSpecs.transmission.type = transmissionType
-      techSpecs.transmission.gears = gears ? Number(gears.replace(/\D/g, '')) : 1
+      //const [transmissionType, gears] = value.split(' de ')
+      //techSpecs.transmission.type = transmissionType
+      techSpecs.transmission.gears = Number(value.replace(/\D/g, ''))
     }
     if (title.match(/Capacidad tanque/i)) techSpecs.fuel.tank = value
     // if (title.match(/luz principal/i)) techSpecs.equipment.lights = value
@@ -62,6 +63,8 @@ export const getTechSpecs = ($page: CheerioAPI): TechSpecs => {
     if (title.match(/Asistente de bajas revoluciones/i)) techSpecs.equipment.lowRPMAssist = value === 'si'
     if (title.match(/Quick Shift/i)) techSpecs.equipment.quickshifter = value === 'si'
     if (title.match(/Modos de manejo/i)) techSpecs.equipment.rideModes = value === 'si'
+    if (title.match(/Sistema de arranque en pendientes/i))
+      techSpecs.equipment.hillStartAssist = value === 'si'
     // if (title.match(/FI/i)) techSpecs.engine.fuelSystem = value === 'si' ? 'inyección' : techSpecs.engine.fuelSystem
   })
 
