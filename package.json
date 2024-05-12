@@ -5,11 +5,11 @@
   },
   "dependencies": {
     "@types/cheerio": "^0.22.35",
-    "cheerio": "^1.0.0-rc.12",
-    "hono": "^4.2.3"
+    "cheerio": "1.0.0-rc.12",
+    "hono": "^4.3.4"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240403.0",
-    "wrangler": "^3.47.0"
+    "@cloudflare/workers-types": "^4.20240502.0",
+    "wrangler": "^3.55.0"
   }
 }
