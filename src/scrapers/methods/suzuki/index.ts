@@ -1,13 +1,13 @@
+import { cheerioFromUrl } from '@/scrapers/utils/cheerioFromUrl'
 import { CheerioAPI } from 'cheerio'
 import { Motorcycle, MotorcycleInfo } from '../../../../types'
 import { MotorcyclesData, ScrapedMotorcycle } from '../../types'
-import { cheerioFromUrl } from '../../utils/cheerioFromUrl'
-import { scrapingData } from './constants'
+import { DOMAIN, scrapingData } from './constants'
 import { getDeductibleData } from './lib/getDeductibles'
 import { getImages } from './lib/getImages'
 import { getTechSpecs } from './lib/getTechSpecs'
 
-const scrapeMotorcycles = ($page: CheerioAPI): MotorcyclesData[] => {
+const scrapeMotorcyclesList = ($page: CheerioAPI): MotorcyclesData[] => {
   const $motorcycles = [...$page('.moto-info')]
 
   const motorcycles = $motorcycles.map(motorcycle => {
@@ -23,9 +23,10 @@ const scrapeMotorcycles = ($page: CheerioAPI): MotorcyclesData[] => {
 }
 
 const scrapeMotorcycleInfo = ($page: CheerioAPI): MotorcycleInfo => {
-  const model = $page('.titulo p').first().text()
-  const year = $page('.modelo').first().text()
+  const model = $page('.titulo p').first().text().trim()
+  const year = $page('.modelo').first().text().replace(/\D/g, '')
   const price = $page('.precio-moto').first().text().replace(/\D/g, '')
+  const type = $page('.categoria').first().text().trim()
   const ivaIncluded =
     $page('.precio .iva')
       .text()
@@ -36,10 +37,11 @@ const scrapeMotorcycleInfo = ($page: CheerioAPI): MotorcycleInfo => {
 
   return {
     model,
+    type,
     year: Number(year),
     price: {
       price: Number(price),
-      currency: 'USD',
+      currency: 'COP',
       ivaIncluded
     },
     techSpecs,
@@ -51,13 +53,15 @@ const scrapeMotorcycleInfo = ($page: CheerioAPI): MotorcycleInfo => {
 const mapMotorcyclesData = async (motorcyclesData: MotorcyclesData[]): Promise<ScrapedMotorcycle[]> => {
   const motorcyclesInfoPromises = motorcyclesData.map<Promise<ScrapedMotorcycle>>(async motorcycleData => {
     const { motorcycleUrl, motorcycleGroup } = motorcycleData
-    const $motorcyclePage = await cheerioFromUrl(motorcycleUrl)
+
+    const urlToLoad = motorcycleUrl.match(/https?:\/\//) ? motorcycleUrl : `${DOMAIN}${motorcycleUrl}`
+    const $motorcyclePage = await cheerioFromUrl(urlToLoad)
 
     const motorcycleInfo = scrapeMotorcycleInfo($motorcyclePage)
     motorcycleInfo.model ||= motorcycleUrl.split('/').findLast(part => part.match(/[a-z]+/)) || ''
 
     return {
-      type: motorcycleGroup,
+      type: motorcycleInfo.type || motorcycleGroup,
       ...motorcycleInfo
     }
   })
@@ -66,10 +70,13 @@ const mapMotorcyclesData = async (motorcyclesData: MotorcyclesData[]): Promise<S
   return motorcyclesInfo
 }
 
-const getPaginationUrls = ($: CheerioAPI) => {
+const getPaginationUrls = ($: CheerioAPI, url: string) => {
   return $('.pager__item a')
     .toArray()
-    .map(a => a.attribs.href)
+    .map(a => {
+      const href = a.attribs.href
+      return `${url}${href}`
+    })
 }
 
 export const getAllMotorcycles = async () => {
@@ -78,13 +85,15 @@ export const getAllMotorcycles = async () => {
   const motorcyclesPromises = urls.map<Promise<Motorcycle[]>>(async url => {
     const $ = await cheerioFromUrl(url)
 
-    const paginationUrls = getPaginationUrls($)
-    const motorcyclesPromises = paginationUrls.map(async paginationUrl => {
-      const $page = await cheerioFromUrl(paginationUrl)
-      return scrapeMotorcycles($page)
-    })
+    const paginationUrls = getPaginationUrls($, url)
 
-    const motorcyclesData = await Promise.all(motorcyclesPromises)
+    const motorcyclesData = await Promise.all(
+      paginationUrls.map(async paginationUrl => {
+        const $page = await cheerioFromUrl(paginationUrl)
+        return scrapeMotorcyclesList($page)
+      })
+    )
+
     const flattenedMotorcyclesData = motorcyclesData.flat()
 
     const motorcycles = await mapMotorcyclesData(flattenedMotorcyclesData)

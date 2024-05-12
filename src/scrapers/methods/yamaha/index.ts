@@ -7,7 +7,7 @@ import { getDeductibleData } from './lib/getDeductibles'
 import { getImages } from './lib/getImages'
 import { getTechSpecs } from './lib/getTechSpecs'
 
-const scrapeMotorcycles = ($page: CheerioAPI): MotorcyclesData[] => {
+const scrapeMotorcyclesList = ($page: CheerioAPI): MotorcyclesData[] => {
   const $motorcyclesSections = [...$page('.all-info section .row:not(:nth-child(1), :nth-child(2))')]
 
   const motorcyclesData = $motorcyclesSections.flatMap(motorcyclesSection => {
@@ -48,7 +48,7 @@ const scrapeMotorcycleInfo = ($page: CheerioAPI): MotorcycleInfo => {
     year: Number(year),
     price: {
       price: Number(price),
-      currency: 'USD',
+      currency: 'COP',
       ivaIncluded
     },
     techSpecs,
@@ -81,7 +81,7 @@ export const getAllMotorcycles = async () => {
   const motorcyclesPromises = urls.map<Promise<Motorcycle[]>>(async url => {
     const $ = await cheerioFromUrl(url)
 
-    const motorcyclesData = scrapeMotorcycles($)
+    const motorcyclesData = scrapeMotorcyclesList($)
     const motorcycles = await mapMotorcyclesData(motorcyclesData)
     return motorcycles.map(motorcycle => ({ ...motorcycle, brand }))
   })
