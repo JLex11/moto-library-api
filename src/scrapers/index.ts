@@ -1,8 +1,11 @@
+import { getAllMotorcycles as getAllSuzukiMotorcycles } from './methods/suzuki'
 import { getAllMotorcycles as getAllYamahaMotorcycles } from './methods/yamaha'
 
 export const getAllMotorcycles = async () => {
-  const suzukiMotorcycles = /* await getAllSuzukiMotorcycles() */ [] as any
-  const yamahaMotorcycles = await getAllYamahaMotorcycles()
+  const [suzukiMotorcycles, yamahaMotorcycles] = await Promise.all([
+    getAllSuzukiMotorcycles(),
+    getAllYamahaMotorcycles()
+  ])
 
   return [...suzukiMotorcycles, ...yamahaMotorcycles]
 }
